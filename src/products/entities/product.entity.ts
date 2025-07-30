@@ -3,10 +3,12 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ProductImage } from './product-image.entity';
 
-@Entity()
+@Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,6 +29,12 @@ export class Product {
   @Column('text', { array: true, default: [] })
   tags: string[];
   // Images
+  @OneToMany(
+    () => ProductImage,
+    (productImage) => productImage.product,
+    { cascade: true, eager: true }, // cascade: true allows saving images with the product
+  )
+  images?: ProductImage[];
 
   @BeforeInsert()
   @BeforeUpdate()
