@@ -3,10 +3,12 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ProductImage } from './product-image.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -28,6 +30,7 @@ export class Product {
   gender: string;
   @Column('text', { array: true, default: [] })
   tags: string[];
+
   // Images
   @OneToMany(
     () => ProductImage,
@@ -35,6 +38,13 @@ export class Product {
     { cascade: true, eager: true }, // cascade: true allows saving images with the product
   )
   images?: ProductImage[];
+
+  @ManyToOne(
+    () => User,
+    (user) => user.product, // Assuming a user can have multiple products
+    { eager: true },
+  )
+  user: User;
 
   @BeforeInsert()
   @BeforeUpdate()
